@@ -1,7 +1,7 @@
 import pandas as pd
 
-tracks = pd.read_json("Tracks.json")
-track_details = pd.read_csv("TracksDetail.csv")
+tracks = pd.read_json("files/Tracks.json")
+track_details = pd.read_csv("files/TracksDetail.csv")
 
 
 # Part 1

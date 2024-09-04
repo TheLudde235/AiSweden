@@ -3,7 +3,7 @@ import numpy as np
 
 print(" - - - - - Part 2.1 - - - - - \n")
 
-df = pd.read_csv("Dummytracks.csv", usecols=["populartySong", "artistName", "populartyArtist", "trackName"])
+df = pd.read_csv("files/Dummytracks.csv", usecols=["populartySong", "artistName", "populartyArtist", "trackName"])
 # df = pd.read_csv("Dummytracks.csv", header=0, usecols=["populartyArtist"])
 
 popularitySong_arr = df["populartySong"].to_numpy()
