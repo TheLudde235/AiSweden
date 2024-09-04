@@ -3,16 +3,17 @@ import pandas as pd
 tracks = pd.read_json("files/Tracks.json")
 track_details = pd.read_csv("files/TracksDetail.csv")
 
+print("\n - - - - - Part 3.1 - - - - - \n")
 
-# Part 1
 print(tracks.value_counts(subset='artist'))
 
-# Part 2
+print("\n - - - - - Part 3.2 - - - - - \n")
+
 albums = tracks.value_counts(subset='album')
 
 print(albums[albums > 5])
 
-# Part 3
+print("\n - - - - - Part 3.3 - - - - - \n")
 
 track_details = track_details.iloc[: , 1:]
 track_details = track_details.drop(columns=["artistName", "trackName"])
@@ -22,7 +23,7 @@ merged = tracks.merge(track_details, how='inner', on='track')
 
 print(merged)
 
-# Part 4
+print("\n - - - - - Part 3.4 - - - - - \n")
 
 genres_dict = dict()
 for genres in merged['genres']:
