@@ -21,6 +21,7 @@ for town in towns:
     for card in soup.find_all('a', {'class': 'hcl-card'}):
         name_div = card.find_all('div', {'class': lambda x: x and x.startswith('Header_truncate')})
         stats_p = card.find_all('p', {'class': lambda x: x and x.startswith('Text_hclText')})
+        fee_div = card.find_all('div', {'class': 'hcl-flex--container hcl-flex--gap-2 hcl-flex--justify-space-between hcl-flex--md-justify-flex-start'})
         price_span = card.find_all('span', {'class': lambda x: x and x.startswith('Text_hclText') and x.startswith('Text_hclTextMedium')})
         location_div = card.find_all('div', {'class': lambda x: x and x.startswith('Location_address')})
         sold_span = card.find_all('span', {'class': lambda x: x and x.startswith('Label_hclLabelSoldAt')})
@@ -51,12 +52,16 @@ for town in towns:
             info_dict["kvMPrice"] = stats_p[2].string.replace('\xa0', ' ')
             info_dict["isValid"] = True
 
+        if len(fee_div) > 0:
+            fee_spans = fee_div[0].find_all('span', {'class': lambda x: x and x.startswith('Text_hclText')})
+            if len(fee_spans) > 0:
+                fee = fee_spans[0].string
+                if "kr/mån" in fee:
+                    info_dict["fee"] = fee
+                    info_dict["isValid"] = True
+
         if len(price_span) > 1:
-            info_dict["endprice"] = " ".join(price_span[0].find_all(text=lambda t: not isinstance(t, Comment))).split("Slutpris  ")[1].replace('\xa0', ' ')
-
-            if price_span[1].string:
-                info_dict["fee"] = price_span[1].string.replace('\xa0', ' ')
-
+            info_dict["endprice"] = " ".join(price_span[0].find_all(string=lambda t: not isinstance(t, Comment))).split("Slutpris  ")[1].replace('\xa0', ' ')
             info_dict["isValid"] = True
 
         if len(location_div) > 0:
