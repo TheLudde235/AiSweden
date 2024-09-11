@@ -28,16 +28,16 @@ for town in towns:
         type_title = card.find_all('title')
 
         info_dict = {
-            "name": "No name found",
-            "size": "No size found",
-            "room": "No room found",
-            "fee": "No fee found",
-            "endprice": "No Endprice found",
-            "kvMPrice": "No KvMPrice found",
-            "saledate": "No Saledate found",
-            "city": "No City found",
-            "district": "No District found",
-            "typeOfProperty": "No TypeOfProperty found",
+            "name": "",
+            "Size": "",
+            "Room": "?",
+            "Fee": "",
+            "Endprice": "",
+            "KvMPrice": "",
+            "Saledate": "",
+            "City": "",
+            "District": "",
+            "TypeOfProperty": "",
             "isValid": False # Just to check if anything has been updated and card is not an ad
         }
 
@@ -47,9 +47,9 @@ for town in towns:
             info_dict["isValid"] = True
 
         if len(stats_p) > 2:
-            info_dict["size"] = stats_p[0].string.replace('\xa0', ' ')
-            info_dict["room"] = stats_p[1].string.replace('\xa0', ' ')
-            info_dict["kvMPrice"] = stats_p[2].string.replace('\xa0', ' ')
+            info_dict["Size"] = int(float(stats_p[0].string.replace('\xa0', ' ').split(" m²")[0].replace(',', '.')))
+            info_dict["Room"] = int(round(float(stats_p[1].string.replace('\xa0', ' ').split(" rum")[0].replace(',', '.'))))
+            info_dict["KvMPrice"] = stats_p[2].string.replace('\xa0', ' ').split("kr/")[0]
             info_dict["isValid"] = True
 
         if len(fee_div) > 0:
@@ -57,25 +57,25 @@ for town in towns:
             if len(fee_spans) > 0:
                 fee = fee_spans[0].string
                 if "kr/mån" in fee:
-                    info_dict["fee"] = fee
+                    info_dict["Fee"] = fee.split("kr/mån")[0]
                     info_dict["isValid"] = True
 
         if len(price_span) > 1:
-            info_dict["endprice"] = " ".join(price_span[0].find_all(string=lambda t: not isinstance(t, Comment))).split("Slutpris  ")[1].replace('\xa0', ' ')
+            info_dict["Endprice"] = " ".join(price_span[0].find_all(string=lambda t: not isinstance(t, Comment))).split("Slutpris  ")[1].replace('\xa0', '').split("kr")[0]
             info_dict["isValid"] = True
 
         if len(location_div) > 0:
             location = location_div[0].span.string.split(', ')
-            info_dict["city"] = location[0]
-            info_dict["district"] = location[1]
+            info_dict["City"] = location[0]
+            info_dict["District"] = location[1]
             info_dict["isValid"] = True
 
         if len(sold_span) > 0:
-            info_dict["saledate"] = sold_span[0].string.split('Såld ')[1]
+            info_dict["Saledate"] = sold_span[0].string.split('Såld ')[1]
             info_dict["isValid"] = True
 
         if len(type_title) > 0:
-            info_dict['typeOfProperty'] = type_title[0].string
+            info_dict['TypeOfProperty'] = type_title[0].string
             info_dict["isValid"] = True
 
         if info_dict["isValid"]: # Removes ads from output
@@ -86,8 +86,9 @@ for town in towns:
 
 Path("output").mkdir(parents=False, exist_ok=True)
 
-with open("output/output.csv", "w+") as file:
-    writer = csv.DictWriter(file, fieldnames=["name", "size", "room", "fee", "endprice", "kvMPrice", "saledate", "city", "district", "typeOfProperty"])
+with open("output/housedata2024.csv", "w+") as file:
+    writer = csv.DictWriter(file, fieldnames=["name", "Size", "Room", "Fee", "Endprice", "KvMPrice", "Saledate", "City", "District", "TypeOfProperty"])
+
     writer.writeheader()
     writer.writerows(properties)
 
